@@ -369,6 +369,7 @@ adds its own data (~2 GB) and uses its RAM while running.
 expoemu device create tablet --profile tablet
 expoemu device create small  --profile small
 expoemu devices                          # list devices + which are running
+expoemu devices --json                   # same, as JSON (for scripts and agents)
 
 expoemu up                               # default phone, container, Metro, app
 expoemu emulator start --device tablet   # boots next to the phone

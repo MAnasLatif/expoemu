@@ -6,6 +6,12 @@ the project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- `expoemu devices --json` prints the device list (name, profile, screen
+  size, running/stopped, serial) and connected phones as one JSON object,
+  so scripts and AI agents don't have to parse the table.
+
 ## [0.7.0] - 2026-11-16
 
 ### Added

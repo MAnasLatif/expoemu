@@ -4,7 +4,8 @@
 # the same time. All devices share one system image; each only adds its own
 # data (~2 GB) and uses its own RAM while running (2–4 GB).
 #
-#   devices                               list devices and which are running
+#   devices [--json]                      list devices and which are running
+#                                         (--json: machine-readable, for scripts/agents)
 #   device create NAME [--profile P]      new device (default profile: phone)
 #   device delete NAME [--yes]            delete a device and its data
 #   device profiles                       available profiles
@@ -22,12 +23,57 @@ cmd="${1:-list}"; shift || true
 case "$cmd" in help|-h|--help) sed -n '2,/^# =====*$/p' "$0"; exit 0 ;; esac
 require_sdk
 
+# A JSON string literal (escapes backslash, quote and control characters).
+json_str() {
+  local v="$1"
+  v="${v//\\/\\\\}"; v="${v//\"/\\\"}"
+  v="$(printf '%s' "$v" | tr -d '\000-\037')"
+  printf '"%s"' "$v"
+}
+
 # Read one key from a device's config.ini.
 avd_conf() { awk -F= -v k="$2" '$1 == k { print $2 }' "$AVD_HOME/$1.avd/config.ini" 2>/dev/null; }
 
 case "$cmd" in
   list)
+    json=false
+    while [ $# -gt 0 ]; do
+      case "$1" in --json) json=true ;; *) die "unknown option: $1 (try: devices --json)" ;; esac; shift
+    done
     running="$(running_emulators 2>/dev/null || true)"
+    phones="$(running_targets 2>/dev/null | awk '$3 == "usb"' || true)"
+    blocked="$(blocked_targets 2>/dev/null || true)"
+    if $json; then
+      # One JSON object on stdout; values come from adb, so escape them.
+      sep=''
+      printf '{"devices":['
+      while read -r name; do
+        [ -n "$name" ] || continue
+        profile="$(avd_conf "$name" expoemu.profile)"; [ -n "$profile" ] || profile=phone
+        w="$(avd_conf "$name" hw.lcd.width)"; h="$(avd_conf "$name" hw.lcd.height)"
+        [[ "$w" =~ ^[0-9]+$ ]] || w=null; [[ "$h" =~ ^[0-9]+$ ]] || h=null
+        serial="$(printf '%s\n' "$running" | awk -v n="$name" '$2 == n { print $1 }')"
+        if [ -n "$serial" ]; then st=running; js="$(json_str "$serial")"; else st=stopped; js=null; fi
+        isdef=false; [ "$name" = "$AVD_NAME" ] && isdef=true
+        printf '%s{"name":%s,"default":%s,"profile":%s,"width":%s,"height":%s,"status":"%s","serial":%s}' \
+          "$sep" "$(json_str "$name")" "$isdef" "$(json_str "$profile")" "$w" "$h" "$st" "$js"
+        sep=','
+      done < <(list_devices)
+      sep=''
+      printf '],"phones":['
+      while read -r s n _; do
+        [ -n "$s" ] || continue
+        printf '%s{"name":%s,"serial":%s,"status":"connected"}' "$sep" "$(json_str "$n")" "$(json_str "$s")"
+        sep=','
+      done <<<"$phones"
+      while read -r s st; do
+        [ -n "$s" ] || continue
+        printf '%s{"name":null,"serial":%s,"status":%s}' "$sep" "$(json_str "$s")" "$(json_str "$st")"
+        sep=','
+      done <<<"$blocked"
+      printf ']}\n'
+      exit 0
+    fi
     printf '%-20s %-9s %-12s %s\n' DEVICE PROFILE SCREEN STATUS
     while read -r name; do
       [ -n "$name" ] || continue
@@ -40,8 +86,6 @@ case "$cmd" in
     done < <(list_devices)
     echo "* default device (also called \"default\")"
     # Physical phones on the same adb server (USB, or Wi-Fi via adb connect).
-    phones="$(running_targets 2>/dev/null | awk '$3 == "usb"' || true)"
-    blocked="$(blocked_targets 2>/dev/null || true)"
     if [ -n "$phones$blocked" ]; then
       echo
       printf '%-20s %-22s %s\n' PHONE SERIAL STATUS

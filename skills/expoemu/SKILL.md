@@ -142,6 +142,7 @@ expoemu run .expoemu/flows/login.flow --var EMAIL=test@example.com
 
 ```bash
 expoemu devices                                  # created devices + running state
+expoemu devices --json                           # same as JSON (name, status, serial)
 expoemu device create tablet --profile tablet    # phone|small|large|tablet|foldable
 expoemu emulator start --device tablet           # runs next to the phone
 expoemu open --all                               # app on every running device

@@ -48,7 +48,7 @@ Waits and asserts exit 0 on success and 1 on failure.
 | Fresh state | `expoemu app clear` (wipes storage, reopens the project) |
 | Edge cases | `expoemu network off` · `dark-mode on` · `font-scale 1.3` · `rotate landscape` · `locale ar` |
 | Permissions | `expoemu permission grant CAMERA` · `permission revoke CAMERA` |
-| Several devices | `expoemu devices` · `expoemu emulator start --device tablet` · add `--device NAME` to any command · `open --all` · `screenshot --all` |
+| Several devices | `expoemu devices` (`--json` to parse) · `expoemu emulator start --device tablet` · add `--device NAME` to any command · `open --all` · `screenshot --all` |
 | Performance | `expoemu perf --reset` → interact → `expoemu perf` · `expoemu memory` |
 | Reload / reopen | `expoemu reload` · `expoemu open` |
 | Add a package | `expoemu shell npm install <pkg>` (or yarn / pnpm / bun, matching the project) |

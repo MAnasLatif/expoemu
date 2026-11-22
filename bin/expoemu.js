@@ -89,7 +89,7 @@ SETUP & LIFECYCLE
   cleanup --project|--caches|--image|--sdk|--all|--legacy   scoped removal (asks first)
 
 SEVERAL DEVICES AT ONCE
-  devices                           list devices and which are running
+  devices [--json]                  list devices and which are running (--json for scripts/agents)
   device create NAME [--profile phone|small|large|tablet|foldable]
   device delete NAME | device profiles
   --device NAME (or -d NAME)        target a device with ANY command, e.g.

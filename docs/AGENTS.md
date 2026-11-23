@@ -34,7 +34,7 @@ Waits and asserts exit 0 on success and 1 on failure.
 
 | Goal | Command |
 |------|---------|
-| Is everything running? | `expoemu status` (exit 0 = all good) |
+| Is everything running? | `expoemu status` (exit 0 = all good) · `expoemu status --json` (machine-readable) |
 | Start / stop everything | `expoemu up --no-animations` · `expoemu down` |
 | Screenshot (prints path) | `expoemu screenshot <name>` |
 | What's on screen | `expoemu ui` (tap coordinates) · `expoemu texts` |

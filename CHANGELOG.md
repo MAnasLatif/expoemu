@@ -6,6 +6,12 @@ the project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- `expoemu status --json` prints the health check as one JSON object
+  (`ok`, `checks` with stable ids, `devices`) so scripts and agents can
+  branch on it without parsing text. Same exit code as `status`.
+
 ## [0.7.0] - 2026-11-16
 
 ### Added

@@ -32,7 +32,7 @@ Add `--device NAME` (or `-d NAME`) to any command to target one device; for
 | `uninstall` | Remove the global command (SDK, devices and settings are kept). |
 | `up [--no-animations] [--headless] [--cold-boot]` | Boot the phone, start the container (installs deps on first use), start Metro, open the app in Expo Go. Honors `--device`. |
 | `down` | Stop the container, every emulator and the adb server. Image, caches and devices are kept. |
-| `status` (alias `doctor`) | Health check of SDK, devices, adb, container, Metro. Exit `1` if something required is down. |
+| `status [--json]` (alias `doctor`) | Health check of SDK, devices, adb, container, Metro. Exit `1` if something required is down. `--json` prints `{"ok", "checks": [{"id", "status": "ok\|warn\|fail", "message", "device"?}], "devices": [{"serial", "name", "kind", "api", "booted"}]}` on stdout instead, with the same exit code. |
 | `emulator start [--device NAME] [--no-animations] [--headless] [--cold-boot] [--wipe]` | Boot one device (default phone). Several can run at once. |
 | `emulator stop [--device NAME] [--keep-adb]` | Stop all devices, or one. |
 | `start` / `stop` | Start / stop only the container for the current project. |
